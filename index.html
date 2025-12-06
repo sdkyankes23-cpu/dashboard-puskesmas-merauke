@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard SDMK Puskesmas Merauke</title>
+    <link rel="stylesheet" href="style.css">
+
+    <!-- ChartJS -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <header>
+        <h1>Dashboard SDMK Puskesmas Merauke</h1>
+    </header>
+
+    <section class="container">
+
+        <div class="filters">
+            <select id="filterPuskesmas"></select>
+        </div>
+
+        <div class="cards">
+
+            <div class="card">
+                <h3>ASN</h3>
+                <p id="asn">0</p>
+            </div>
+
+            <div class="card">
+                <h3>NON-ASN</h3>
+                <p id="nonasn">0</p>
+            </div>
+
+            <div class="card">
+                <h3>Laki-laki</h3>
+                <p id="laki">0</p>
+            </div>
+
+            <div class="card">
+                <h3>Perempuan</h3>
+                <p id="perempuan">0</p>
+            </div>
+
+            <div class="card">
+                <h3>OAP</h3>
+                <p id="oap">0</p>
+            </div>
+
+            <div class="card">
+                <h3>Non-OAP</h3>
+                <p id="nonoap">0</p>
+            </div>
+
+        </div>
+
+        <canvas id="chartNakes"></canvas>
+
+    </section>
+
+    <script src="script.js"></script>
+
+</body>
+</html>
