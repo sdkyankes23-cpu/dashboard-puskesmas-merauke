@@ -5,15 +5,39 @@ let chartInstance;
 // Fetch data dari Google Sheets
 async function fetchData() {
     const response = await fetch(apiURL);
-    const data = await response.json();
+    const json = await response.json();
+
+    const headers = json.headers[0]; // header baris pertama
+    const rows = json.rows;
+
+    // Convert rows ke array objek
+    const data = rows.map(r => {
+        let obj = {};
+        headers.forEach((h, i) => {
+            obj[h] = r[i];
+        });
+        return {
+            puskesmas: obj["NAMA PUSKESMAS"],
+            asn: Number(obj["ASN"] || 0),
+            nonasn: Number(obj["Non-ASN"] || 0),
+            laki: Number(obj["LAKI - LAKI"] || 0),
+            perempuan: Number(obj["PEREMPUAN"] || 0),
+            oap: Number(obj["OAP"] || 0),
+            nonoap: Number(obj["NON-OAP"] || 0),
+            dokter: Number(obj["Dokter Umum"] || 0),
+            perawat: Number(obj["Keperawatan"] || 0),
+            bidan: Number(obj["Kebidanan"] || 0)
+        };
+    });
+
     return data;
 }
+
 
 // Mulai proses load
 fetchData().then(allData => {
     console.log(allData); // Debug
 
-    // Isi dropdown Puskesmas
     const puskesmasList = [...new Set(allData.map(x => x.puskesmas))];
     const filter = document.getElementById("filterPuskesmas");
 
@@ -22,28 +46,29 @@ fetchData().then(allData => {
         filter.innerHTML += `<option value="${ps}">${ps}</option>`;
     });
 
-    // Tampilkan default semua data
     displayData(allData);
 
-    // Event ketika filter diganti
     filter.addEventListener("change", () => {
         const selected = filter.value;
-        const filtered = selected === "Semua" ? allData : allData.filter(x => x.puskesmas === selected);
+        const filtered = selected === "Semua"
+            ? allData
+            : allData.filter(x => x.puskesmas === selected);
         displayData(filtered);
     });
 });
+
 
 // Fungsi menampilkan data
 function displayData(data) {
     let asn = 0, nonasn = 0, laki = 0, perempuan = 0, oap = 0, nonoap = 0;
 
     data.forEach(row => {
-        asn += Number(row.asn);
-        nonasn += Number(row.nonasn);
-        laki += Number(row.laki);
-        perempuan += Number(row.perempuan);
-        oap += Number(row.oap);
-        nonoap += Number(row.nonoap);
+        asn += row.asn;
+        nonasn += row.nonasn;
+        laki += row.laki;
+        perempuan += row.perempuan;
+        oap += row.oap;
+        nonoap += row.nonoap;
     });
 
     document.getElementById("asn").textContent = asn;
@@ -56,12 +81,13 @@ function displayData(data) {
     updateChart(data);
 }
 
+
 // Grafik Chart.js
 function updateChart(data) {
     const nakes = [
-        data.reduce((sum, x) => sum + Number(x.dokter), 0),
-        data.reduce((sum, x) => sum + Number(x.perawat), 0),
-        data.reduce((sum, x) => sum + Number(x.bidan), 0),
+        data.reduce((sum, x) => sum + x.dokter, 0),
+        data.reduce((sum, x) => sum + x.perawat, 0),
+        data.reduce((sum, x) => sum + x.bidan, 0),
     ];
 
     const ctx = document.getElementById("chartNakes");
